@@ -2,40 +2,57 @@ from input import parse_input
 from classes import AddressBook, Record, input_error
 from data import save_data, load_data
 
-# @input_error
-# def add_contact(args, book):
-#     book.add_record(Record(args[0]))
-#     if len(args) > 1:
-#         i = 1
-#         while i < len(args):
-#             book[args[0]].add_phone(args[i])
-#             i += 1
-        
 
 @input_error
-def change_phone(args, book):
-    return book[args[0]].edit_phone(args[1], args[2])
+def add_contact(args, book: AddressBook):
+    name, phone, *_ = args
+    record = book.find(name)
+    message = "Contact updated."
+    if record is None:
+        record = Record(name)
+        book.add_record(record)
+        message = "Contact added."
+    if phone:
+        record.add_phone(phone)
+    return message
+
 
 @input_error
-def find_phone_owner(args, book):
-    return book[args[0]].find_phone_owner()
+def show_all(book: AddressBook):
+    return "\n".join(str(record) for record in book.values())
+
+
+@input_error
+def change(args, book):
+    book[args[0]].edit_phone(args[1], args[2])
+    return "Phone changed"
+
+
+@input_error
+def phone(args, book):
+    record = book.find(args[0])
+    if record is None:
+        return "Contact not found"
+    return '; '.join(p.value for p in record.get_phones())
+
 
 @input_error
 def add_birthday(args, book):
-    return book[args[0]].add_birthday(args[1])
+    book[args[0]].add_birthday(args[1])
+    return "Birthday added"
+
 
 @input_error
 def show_birthday(args, book):
     return book[args[0]].show_birthday()
 
-# @input_error
-# def get_upcoming_birthdays(book):
-#     for contact in book.get_upcoming_birthdays():
-#         print(contact)
+
+@input_error
+def birthdays(book):
+    return "\n".join(birthday for birthday in book.get_upcoming_birthdays())
 
 
 def main():
-    #book = AddressBook()
     book = load_data()
     print("Welcome to the assistant bot!")
     while True:
@@ -47,26 +64,22 @@ def main():
         elif command == "hello":
             print("How can I help you?")
         elif command == "add":
-            print(AddressBook.add_contact(args, book))
+            print(add_contact(args, book))
         elif command == "change":
-            print(change_phone(args, book))
+            print(change(args, book))
         elif command == "phone":
-            print(find_phone_owner(args, book))
+            print(phone(args, book))
         elif command == "all":
-            for element in book.values():
-                print(element)
+            print(show_all(book))
         elif command == "add-birthday":
             print(add_birthday(args, book))
         elif command == "show-birthday":
             print(show_birthday(args, book))
         elif command == "birthdays":
-            for line in book.get_upcoming_birthdays():
-                print(line)
+            print(birthdays(book))
         else:
             print("Invalid command.")
 
     save_data(book)
-
-
 if __name__ == "__main__":
-    main() 
+    main()

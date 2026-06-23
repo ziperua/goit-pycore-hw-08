@@ -118,10 +118,10 @@ class AddressBook(UserDict):
             else:
                 compare = f"{year}-{month}-{day}"
             str_week = [str(date) for date in week]
-
+            date_only = record.birthday.value.split(".")
             for date in str_week:
                 if compare == date:
-                    yield f"{record.name}: {record.birthday.value}"
+                    yield f"{record.name}: {date_only[0]}.{date_only[1]}"
 
     def __str__(self):
         return "\n".join(str(record) for record in self.data.values())

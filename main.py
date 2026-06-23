@@ -19,7 +19,7 @@ def add_contact(args, book: AddressBook):
 
 @input_error
 def show_all(book: AddressBook):
-    return "\n".join(str(record) for record in book.values())
+    return str(book)
 
 
 @input_error

@@ -33,7 +33,7 @@ def phone(args, book):
     record = book.find(args[0])
     if record is None:
         return "Contact not found"
-    return '; '.join(p.value for p in record.get_phones())
+    return "; ".join(p.value for p in record.get_phones())
 
 
 @input_error
@@ -49,7 +49,12 @@ def show_birthday(args, book):
 
 @input_error
 def birthdays(book):
-    return "\n".join(birthday for birthday in book.get_upcoming_birthdays())
+    result = book.get_upcoming_birthdays()
+    if not result:
+        return "No upcoming birthdays"
+    return "\n".join(
+        f"{item['name']}: {item['congratulation_date']}" for item in result
+    )
 
 
 def main():
@@ -81,5 +86,7 @@ def main():
             print("Invalid command.")
 
     save_data(book)
+
+
 if __name__ == "__main__":
     main()
